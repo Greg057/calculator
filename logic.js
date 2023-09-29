@@ -31,9 +31,12 @@ operationButtons.forEach((button) => {
 
 equalButton.addEventListener("click", () => {
     arr = displayValue.split(/([+\-x\/])/);
+    if (arr[0] === "") {
+        arr.splice(0, 3, `${-arr[2]}`)
+    }
     arr = arr.filter(char => char!== "");
     for (let i = 1; i<arr.length; i+2) {
-        if (/[+\-x\/]/.test(arr[i]) && (/[+\-x\/]/.test(arr[i-1]) || /[+\-x\/]/.test(arr[i+1]))) {
+        if (/[+\-x\/]/.test(arr[i]) && (!/[+\-x\/][0-9]/.test(arr[i-1])) && (/[+\-x\/]/.test(arr[i-1]) || /[+\-x\/]/.test(arr[i+1]))) {
             result = error();
             break;
         }
@@ -43,8 +46,11 @@ equalButton.addEventListener("click", () => {
         }
         
     }
+    if (result === "NaN") {
+        result = error();
+    } 
     typeof result === "number" ? display.textContent = Math.round(result*100000)/100000 : display.textContent = result;
-    result === 0 ? displayValue = "" : displayValue = result;
+    result === 0 || result === "ERROR" ? displayValue = "" : displayValue = result;
 })
 
 clearButton.addEventListener("click", clear);
@@ -72,8 +78,7 @@ function divide (n1, n2) {
 }
 
 function error () {
-    console.log("error");
-    displayValue = 0;
+    displayValue = "";
     return "ERROR";
 }
 
